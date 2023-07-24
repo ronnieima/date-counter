@@ -13,35 +13,17 @@ function Counter() {
   const [step, setStep] = useState(1);
   const [count, setCount] = useState(0);
 
-  function handlePreviousStep() {
-    setStep((step) => step - 1);
-  }
-
-  function handleNextStep() {
-    setStep((step) => step + 1);
-  }
-
-  function handlePreviousCount() {
-    setCount((count) => count - step);
-  }
-
-  function handleNextCount() {
-    setCount((count) => count + step);
+  function reset() {
+    setStep(1);
+    setCount(0);
   }
 
   return (
     <div className="counter">
-      <TextWithCounters
-        text="Step"
-        counter={step}
-        handlers={[handlePreviousStep, handleNextStep]}
-      />
-      <TextWithCounters
-        text="Count"
-        counter={count}
-        handlers={[handlePreviousCount, handleNextCount]}
-      />
+      <Range step={step} setStep={setStep} />
+      <FieldWithCounterButtons count={count} step={step} setCount={setCount} />
       <DateCounter count={count} />
+      {(count !== 0 || step !== 1) && <button onClick={reset}>Reset</button>}
     </div>
   );
 }
@@ -58,12 +40,31 @@ function DateCounter({ count }) {
   );
 }
 
-function TextWithCounters({ text, counter, handlers }) {
+function Range({ step, setStep }) {
   return (
-    <div className="buttonText">
-      <button onClick={handlers[0]}>-</button>
-      <span>{`${text}: ${counter}`}</span>
-      <button onClick={handlers[1]}>+</button>
+    <div>
+      <input
+        type="range"
+        min="0"
+        max="10"
+        value={step}
+        onChange={(e) => setStep(Number(e.target.value))}
+      ></input>
+      <span>{step}</span>
+    </div>
+  );
+}
+
+function FieldWithCounterButtons({ count, step, setCount }) {
+  return (
+    <div>
+      <button onClick={() => setCount((count) => count - step)}>-</button>
+      <input
+        type="text"
+        value={count}
+        onChange={(e) => setCount(Number(e.target.value))}
+      />
+      <button onClick={() => setCount((count) => count + step)}>+</button>
     </div>
   );
 }
